@@ -1,0 +1,23 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.0
+    hooks:
+      - id: ruff-check
+        args: [ --fix ]
+      - id: ruff-format
+
+  - repo: https://github.com/jorisroovers/gitlint
+    rev: v0.19.1
+    hooks:
+      - id: gitlint
+
+  - repo: local
+    hooks:
+      - id: validate-branch-name
+        name: Validate Branch Name
+        entry: bash -c 'BRANCH_NAME=$(git symbolic-ref --short HEAD); PATTERN="^(feature|bugfix|hotfix|release|support|chore|docs)/.+"; if [[ ! "$BRANCH_NAME" =~ $PATTERN ]]; then echo "Error Branch name $BRANCH_NAME does not follow the convention."; echo "Allowed prefixes feature/, bugfix/, hotfix/, release/, support/, chore/, docs/"; exit 1; fi'
+        language: system
+        pass_filenames: false
+        always_run: true
